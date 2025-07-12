@@ -16,13 +16,65 @@ namespace Inventory.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Product>> GetProducts()
+        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
             var products = await _context.Products.ToListAsync();
             return products;
         }
 
+        [HttpGet]
+        [Route("{id:int}")]
+        public async Task<ActionResult<Product>> GetProductById(int id)
+        {
+            var product = await _context.Products.FindAsync(id);
+            if (product == null) return NotFound();
+            return Ok(product);
+        }
 
+        [HttpPost]
+        public async Task<ActionResult<int>> AddProduct(Product product)
+        {
+            product.Id = 0;
+            _context.Products.Add(product);
+            await _context.SaveChangesAsync();
+            return Ok(product.Id);
+        }
+
+        [HttpPut]
+        [Route("{id}")]
+        public async Task<ActionResult> UpdateProduct(int id, Product newProduct)
+        {
+            if (id != newProduct.Id) return BadRequest();
+
+            var product = await _context.Products.FindAsync(newProduct.Id);
+
+            if (product == null) return NotFound();
+
+            product.Name = newProduct.Name;
+            product.Quantity = newProduct.Quantity;
+            product.Price = newProduct.Price;
+            product.Category = newProduct.Category;
+
+            _context.Products.Update(product);
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<ActionResult> DeleteProduct(int id)
+        {
+            var product = await _context.Products.FindAsync(id);
+            if (product == null) return NotFound();
+
+            _context.Products.Remove(product);
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
 
     }
 }
