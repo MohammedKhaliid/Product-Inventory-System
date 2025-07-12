@@ -5,11 +5,15 @@ namespace Inventory.Api.Data
 {
     public class InventoryContext : DbContext
     {
+        public InventoryContext(DbContextOptions<InventoryContext> options) : base(options)
+        {
+
+        }
         public DbSet<Product> Products { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=InventoryDB;Trusted_Connection=True;");
+            modelBuilder.Entity<Product>().ToTable("Products");
         }
     }
 }
