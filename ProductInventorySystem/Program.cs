@@ -1,3 +1,6 @@
+using Inventory.Api.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,6 +9,11 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddDbContext<InventoryContext>(options => options.UseSqlServer(
+    "Server=(localdb)\\mssqllocaldb;Database=InventoryDB;Trusted_Connection=True;"
+    ));
+
 
 var app = builder.Build();
 
