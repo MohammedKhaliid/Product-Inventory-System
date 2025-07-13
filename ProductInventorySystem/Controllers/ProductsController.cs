@@ -31,6 +31,17 @@ namespace Inventory.Api.Controllers
             return Ok(product);
         }
 
+        [HttpGet]
+        [Route("in-stock")]
+        public async Task<ActionResult<IEnumerable<Product>>> GetInStockProducts()
+        {
+            var products = await _context.Products.Where(p => p.Quantity > 0).ToListAsync();
+
+            if (products == null) return NotFound();
+
+            return products;
+        }
+
         [HttpPost]
         public async Task<ActionResult<int>> AddProduct(Product product)
         {
