@@ -37,7 +37,7 @@ namespace Inventory.Api.Controllers
         {
             var products = await _context.Products.Where(p => p.Quantity > 0).ToListAsync();
 
-            if (products == null) return NotFound();
+            if (!products.Any()) return NotFound();
 
             return products;
         }
