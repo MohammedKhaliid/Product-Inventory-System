@@ -1,5 +1,6 @@
 using Inventory.Api.Data;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,10 @@ builder.Services.AddDbContext<InventoryContext>(options => options.UseSqlServer(
     "Server=(localdb)\\mssqllocaldb;Database=InventoryDB;Trusted_Connection=True;"
     ));
 
+builder.Host.UseSerilog((context, config) =>
+{
+    config.WriteTo.Console();
+});
 
 var app = builder.Build();
 
