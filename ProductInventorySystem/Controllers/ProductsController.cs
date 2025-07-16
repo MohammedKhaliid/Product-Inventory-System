@@ -10,16 +10,19 @@ namespace Inventory.Api.Controllers
     public class ProductsController : Controller
     {
         public readonly InventoryContext _context;
-        public ProductsController(InventoryContext context)
+        private readonly ILogger<ProductsController> _logger;
+        public ProductsController(InventoryContext context, ILogger<ProductsController> logger)
         {
             _context = context;
+            _logger = logger;
+            
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
             var products = await _context.Products.ToListAsync();
-            return products;
+            return Ok(products);
         }
 
         [HttpGet]
@@ -39,16 +42,19 @@ namespace Inventory.Api.Controllers
 
             if (!products.Any()) return NotFound();
 
-            return products;
+            return Ok(products);
         }
 
         [HttpPost]
         public async Task<ActionResult<int>> AddProduct(Product product)
         {
-            product.Id = 0;
+            //either assign it a zero or it is zero by defulat
+            //(but don't assign any other value, this will throw an exception)
+            product.Id = 0; 
+            
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
-            return Ok(product.Id);
+            return Ok(product);
         }
 
         [HttpPut]
@@ -57,34 +63,25 @@ namespace Inventory.Api.Controllers
         {
             if (id != newProduct.Id) return BadRequest();
 
-            var product = await _context.Products.FindAsync(newProduct.Id);
+            int rowsAffected = await _context.Products.Where(p => p.Id == id).ExecuteUpdateAsync(
+                setters => setters
+                .SetProperty(p => p.Name, newProduct.Name)
+                .SetProperty(p => p.Quantity, newProduct.Quantity)
+                .SetProperty(p => p.Price, newProduct.Price)
+                .SetProperty(p => p.Category, newProduct.Category));
 
-            if (product == null) return NotFound();
-
-            product.Name = newProduct.Name;
-            product.Quantity = newProduct.Quantity;
-            product.Price = newProduct.Price;
-            product.Category = newProduct.Category;
-
-            _context.Products.Update(product);
-
-            await _context.SaveChangesAsync();
-
-            return Ok();
+            if (rowsAffected == 0) return NotFound("There are no records matching this Id ");
+            return Ok("Updated Successfully");
         }
 
         [HttpDelete]
         [Route("{id}")]
         public async Task<ActionResult> DeleteProduct(int id)
         {
-            var product = await _context.Products.FindAsync(id);
-            if (product == null) return NotFound();
+            int rowsAffected = await _context.Products.Where(p => p.Id == id).ExecuteDeleteAsync();
 
-            _context.Products.Remove(product);
-
-            await _context.SaveChangesAsync();
-
-            return Ok();
+            if (rowsAffected == 0) return NotFound("There are no records matching this Id");
+            return Ok("Deleted Successfully");
         }
 
     }
