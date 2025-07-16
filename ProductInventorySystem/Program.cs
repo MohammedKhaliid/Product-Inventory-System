@@ -1,5 +1,7 @@
+using Inventory.Api.Controllers;
 using Inventory.Api.Data;
 using Inventory.Api.Middlewares;
+using Inventory.Api.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -15,6 +17,7 @@ builder.Services.AddSwaggerGen();
 var connectionString = builder.Configuration.GetConnectionString("InventoryDBLocalConnection");
 
 builder.Services.AddDbContext<InventoryContext>(options => options.UseSqlServer(connectionString));
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 builder.Host.UseSerilog((context, config) =>
 {
