@@ -1,4 +1,5 @@
 using Inventory.Api.Data;
+using Inventory.Api.Middlewares;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -28,6 +29,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<ProfilingMiddleware>();
 
 app.UseHttpsRedirection();
 
