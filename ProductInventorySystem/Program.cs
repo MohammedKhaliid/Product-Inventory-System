@@ -11,9 +11,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<InventoryContext>(options => options.UseSqlServer(
-    "Server=(localdb)\\mssqllocaldb;Database=InventoryDB;Trusted_Connection=True;"
-    ));
+var connectionString = builder.Configuration.GetConnectionString("InventoryDBLocalConnection");
+
+builder.Services.AddDbContext<InventoryContext>(options => options.UseSqlServer(connectionString));
 
 builder.Host.UseSerilog((context, config) =>
 {
