@@ -1,12 +1,11 @@
 ﻿using Inventory.Api.Data;
-using Inventory.Api.Repositories;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using ProductInventorySystem.Models;
 using System.Data;
 
-namespace Inventory.Api.Controllers
+namespace Inventory.Api.Repositories
 {
     public class ProductRepository : IProductRepository
     {

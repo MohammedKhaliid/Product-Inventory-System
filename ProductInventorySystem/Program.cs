@@ -1,4 +1,3 @@
-using Inventory.Api.Controllers;
 using Inventory.Api.Data;
 using Inventory.Api.Middlewares;
 using Inventory.Api.Repositories;
